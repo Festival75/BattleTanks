@@ -1,0 +1,21 @@
+# -*- coding: utf-8 -*-
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
+RIGHT = 0
+DOWN = 1
+LEFT = 2
+UP = 3
+
+COLOR = 0
+BARREL = 1
+
+BLUE = 0
+DARK = 1
+GREEN = 2
+RED = 3
+SAND = 4
+
+START_X = 0
+START_Y = 0
