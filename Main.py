@@ -1,27 +1,31 @@
 # -*- coding: utf-8 -*-
-from Constants import *
 from Battlefield import *
 from Player import *
 import pygame
+import logging
 
 
 class Main:
+
     def __init__(self, screen):
+        """Инициализация переменных и создание экземпляров классов"""
+        logging.info('Initialize Main class')
         self.player = Player(screen, 'Test', 'GREEN', 'BARREL_TYPE3')
         self.battlefield = Battlefield(screen)
         self.screen = screen
-        self.background = pygame.image.load('data/background.jpg')
         self.running = True
         self.main_loop()
 
     def render(self):
-        # self.screen.blit(self.background, (0, 0))
+        """Отрисовка игровых классов"""
+
         self.battlefield.render_battlefield()
-        self.player.move()
         self.player.render()
         pygame.display.flip()
 
     def handle_events(self):
+        """Логика реакций игры на нажатия клавиш"""
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -53,12 +57,20 @@ class Main:
                     self.player.moving[UP] = 0
 
     def main_loop(self):
+        """Основной цикл программы"""
+        logging.info('Starting main_loop')
         while self.running:
+            self.battlefield.build_field()
+            self.player.move()
             self.render()
             self.handle_events()
-
+        logging.info('Main_loop stop')
 
 if __name__ == '__main__':
+    with open('Game.log', 'w'):
+        pass
+    logging.basicConfig(filename='Game.log', format='%(asctime)s - %(levelname)s : %(message)s', level=logging.INFO)
+
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     Main(screen)

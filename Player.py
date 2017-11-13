@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
 from Constants import *
 import pygame
+import logging
 
 
 class Player:
+
     def __init__(self, screen, name, color, barrel_type):
-        self.body_image_pack = []
-        self.barrel_image_pack = []
+        """Инициализация переменных и выполнение необходимых преобразований"""
+        logging.basicConfig(filename='Game.log', format='%(asctime)s - %(levelname)s : %(message)s', level=logging.INFO)
+        logging.info('Initialize Player class')
+        self.tank = []                  # список представляющий собой танк (корпус+пушка)
+        self.body_image_pack = []       # список с картинками корпуса на 4 направления
+        self.barrel_image_pack = []     # список с картинками пушки на 4 направления
         self.screen = screen
         self.direction = RIGHT
         self.position_x = START_X
         self.position_y = START_Y
+        self.moving = [0, 0, 0, 0]
         self.color = color
         self.barrel_type = barrel_type
         self.name = name
@@ -36,7 +43,11 @@ class Player:
                                     "BARREL_TYPE3": "data/tank/tankSand_barrel3_outline.png"}
                            }
         self.rotate()
-        self.tank = []
+        self.select_tank_type()
+
+    def select_tank_type(self):
+        """Формирует модель танка, выбирая изображения корпуса и пушки"""
+
         if self.color in self.image_pack.keys():
             body = self.body_image_pack[self.direction]
             self.tank.append(body)
@@ -47,10 +58,9 @@ class Player:
             self.tank.append(barrel)
         else:
             exit()
-        self.moving = [0, 0, 0, 0]
-        self.render()
 
     def rotate(self):
+        """Генерирует по 4 изображения корпуса и пушки, на 4 основных направления"""
         self.body_image_pack.append(
             pygame.transform.rotate(pygame.image.load(self.image_pack[self.color]['BODY']).convert_alpha(), 90))
         self.body_image_pack.append(pygame.image.load(self.image_pack[self.color]['BODY']).convert_alpha())
@@ -70,14 +80,17 @@ class Player:
                                     180))
 
     def move(self):
-        if self.moving[RIGHT] == 1:
-            self.position_x += PLAYER_SPEED
-        if self.moving[DOWN] == 1:
-            self.position_y += PLAYER_SPEED
-        if self.moving[LEFT] == 1:
-            self.position_x -= PLAYER_SPEED
-        if self.moving[UP] == 1:
-            self.position_y -= PLAYER_SPEED
+        """Изменяет координаты танка в завимости от значения списка moving"""
+        if self.moving[RIGHT] == 1: self.position_x += PLAYER_SPEED
+        if self.moving[DOWN] == 1: self.position_y += PLAYER_SPEED
+        if self.moving[LEFT] == 1: self.position_x -= PLAYER_SPEED
+        if self.moving[UP] == 1: self.position_y -= PLAYER_SPEED
+
+        # танк не выезжает за границы экрана
+        if self.position_x <= 0: self.position_x = 0
+        if self.position_y <= 0: self.position_y = 0
+        if self.position_x >= SCREEN_WIDTH - 38: self.position_x = SCREEN_WIDTH - 38
+        if self.position_y >= SCREEN_HEIGHT - 38: self.position_y = SCREEN_HEIGHT - 38
 
     def barrel_position(self) -> tuple:
         """Управляет положением пушки относительно модели танка"""
@@ -97,6 +110,7 @@ class Player:
         return barrel_position
 
     def render(self):
+        """Отрисовка модели танка на текущей позиции (x,y)"""
         self.tank = [self.body_image_pack[self.direction], self.barrel_image_pack[self.direction]]
         self.screen.blit(self.tank[0], (self.position_x, self.position_y))
         self.screen.blit(self.tank[1], self.barrel_position())

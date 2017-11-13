@@ -9,3 +9,7 @@ out
 gen
 Будет удалено .gitignore
 Будет удалено .idea/
+*.log
+Будет удалено AllGraphics/
+Будет удалено Game.log
+Будет удалено __pycache__/
