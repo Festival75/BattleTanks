@@ -4,7 +4,7 @@ import pygame
 import logging
 import traceback
 import sys
-
+from Player import Player
 
 class Battlefield:
 
@@ -44,8 +44,8 @@ class Battlefield:
                 count += 1
                 col += 1
             self.battlefield_map[row] = row_map
-            print(self.battlefield_map)
             row += 1
+        return self.battlefield_map
 
     def render_battlefield(self):
         """Отрисовать поле на основе полученной карты"""
